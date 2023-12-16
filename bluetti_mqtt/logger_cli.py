@@ -16,15 +16,22 @@ from bluetti_mqtt.core import (
     BluettiDevice, ReadHoldingRegisters, DeviceCommand
 )
 
-
-def log_packet(output: TextIOWrapper, data: bytes, command: DeviceCommand):
-    log_entry = {
-        'type': 'client',
-        'time': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime()),
-        'data': base64.b64encode(data).decode('ascii'),
-        'command': base64.b64encode(bytes(command)).decode('ascii'),
-    }
-    output.write(json.dumps(log_entry) + '\n')
+# TO-DO: Not really a todo but we changed the log_packet function
+"""
+Added a 4th argument to log_packet called parsed: dict
+I commented out log entry and changed parsed to include type and time.
+I commented out the original output.write and wrote my str(parsed)
+"""
+def log_packet(output: TextIOWrapper, data: bytes, command: DeviceCommand, parsed: dict):
+    #log_entry = {
+    #    'type': 'client',
+    #    'time': time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime()),
+    #    'data': str(data),
+    #    'command': base64.b64encode(bytes(command)).decode('ascii'),
+    #}
+    #output.write(json.dumps(log_entry) + '\n')
+    parsed['time'] = time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime())
+    output.write(str(parsed) + '\n')
 
 
 def log_invalid(output: TextIOWrapper, err: Exception, command: DeviceCommand):
@@ -45,7 +52,7 @@ async def log_command(client: BluetoothClient, device: BluettiDevice, command: D
             body = command.parse_response(response)
             parsed = device.parse(command.starting_address, body)
             print(parsed)
-        log_packet(log_file, response, command)
+        log_packet(log_file, response, command, parsed)
     except (BadConnectionError, BleakError, ModbusError, ParseError) as err:
         print(f'Got an error running command {command}: {err}')
         log_invalid(log_file, err, command)
