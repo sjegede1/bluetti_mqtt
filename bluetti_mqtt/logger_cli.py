@@ -51,6 +51,8 @@ async def log_command(client: BluetoothClient, device: BluettiDevice, command: D
         if isinstance(command, ReadHoldingRegisters):
             body = command.parse_response(response)
             parsed = device.parse(command.starting_address, body)
+        else:
+            parsed = {}
         # parsed_info = device.parse(command.starting_address, body)
         print('FLAG 1: ', parsed)
         log_packet(log_file, response, command, parsed)
