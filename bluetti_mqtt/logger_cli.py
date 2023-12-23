@@ -30,7 +30,7 @@ def log_packet(output: TextIOWrapper, data: bytes, command: DeviceCommand, parse
     #    'command': base64.b64encode(bytes(command)).decode('ascii'),
     #}
     #output.write(json.dumps(log_entry) + '\n')
-    parsed['time'] = time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime())
+    parsed_info['time'] = time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime())
     output.write(str(parsed_info) + '\n')
 
 
